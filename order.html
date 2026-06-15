@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commande — Travel to african</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #e6e6e6;
+      --text: #0a0a0a;
+      --muted: #666666;
+      --accent: #000000;
+      --accent-dark: #444444;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--bg); color: var(--text); font-family: var(--font-body); }
+    body { min-height: 100vh; padding: 24px; }
+    a { color: var(--accent); text-decoration: none; }
+    .page { max-width: 980px; margin: 0 auto; }
+    .badge { display: inline-block; margin-bottom: 18px; color: var(--muted); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+    h1 { font-family: var(--font-display); font-size: 36px; line-height: 1.05; margin-bottom: 12px; }
+    p { color: var(--muted); margin-bottom: 24px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; }
+    .field { margin-bottom: 18px; }
+    .field label { display: block; margin-bottom: 8px; font-family: var(--font-display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+    .field select { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: #0d0d0d; color: var(--text); font-family: var(--font-body); font-size: 14px; }
+    .field select option { background: #0d0d0d; }
+    .product-images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .product-images img { width: 100%; height: 520px; border-radius: 20px; object-fit: cover; }
+    .actions { display: grid; gap: 12px; margin-top: 12px; }
+    @media (max-width: 900px) {
+      .page { padding: 24px 12px; }
+      .product-images { grid-template-columns: 1fr; }
+      .product-images img { height: 360px; }
+    }
+    .actions button { cursor: pointer; border: none; border-radius: 999px; padding: 14px 20px; font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase; }
+    .btn-primary { background: var(--accent); color: #ffffff; }
+    .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+    .note { margin-top: 18px; font-size: 13px; color: var(--muted); line-height: 1.65; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="badge">Commande</div>
+    <h1 id="productName">Travel to african</h1>
+    <p id="productInfo">Choisissez la taille et la couleur avant d'ouvrir WhatsApp.</p>
+    <p id="productDescription" class="note" style="display:none;"></p>
+    <div class="product-images" id="productImages"></div>
+    <div class="card">
+      <div class="field">
+        <label for="sizeSelect">Taille</label>
+        <select id="sizeSelect">
+          <option value="">Sélectionnez une taille</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="colorSelect">Couleur</label>
+        <select id="colorSelect">
+          <option value="">Sélectionnez une couleur</option>
+          <option value="Blanc">Blanc</option>
+          <option value="Noir">Noir</option>
+          <option value="Gris">Gris</option>
+          <option value="Rouge">Rouge</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="confirmButton" type="button">Commander sur WhatsApp</button>
+        <button class="btn-secondary" id="backButton" type="button">Retour à la boutique</button>
+      </div>
+      <p class="note">Après validation, vous serez redirigé vers WhatsApp avec votre sélection de taille et de couleur.</p>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || 'Produit';
+    const price = params.get('price') || '';
+    const phone = '2250501673170';
+    const productImagesEl = document.getElementById('productImages');
+    const productNameEl = document.getElementById('productName');
+    const productInfoEl = document.getElementById('productInfo');
+    const sizeSelect = document.getElementById('sizeSelect');
+    const colorSelect = document.getElementById('colorSelect');
+    const confirmButton = document.getElementById('confirmButton');
+    const backButton = document.getElementById('backButton');
+
+    productNameEl.textContent = name;
+    productInfoEl.textContent = price ? `${price} — Choisissez votre taille et couleur.` : 'Choisissez votre taille et votre couleur.';
+    const description = params.get('description') || '';
+    const productDescriptionEl = document.getElementById('productDescription');
+    if (description) {
+      productDescriptionEl.style.display = '';
+      productDescriptionEl.textContent = description;
+    }
+
+    const imageUrls = [];
+    for (let i = 1; i <= 5; i += 1) {
+      const imageUrl = params.get(`image${i}`);
+      if (imageUrl) imageUrls.push(imageUrl);
+    }
+    if (imageUrls.length) {
+      imageUrls.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = name;
+        productImagesEl.appendChild(img);
+      });
+    }
+
+    confirmButton.addEventListener('click', () => {
+      const size = sizeSelect.value;
+      const color = colorSelect.value;
+      if (!size || !color) {
+        alert('Veuillez choisir une taille et une couleur pour continuer.');
+        return;
+      }
+      const message = `Bonjour, je souhaite commander ${name} (${price}), taille ${size}, couleur ${color}. Merci !`;
+      window.location.href = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+    });
+
+    backButton.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
